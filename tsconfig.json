@@ -1,0 +1,31 @@
+{
+  // This file is not used in compilation. It is here just for a nice editor experience.
+
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "sourceMap": true,
+    "target": "ESNext",
+    "module": "ES2020",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+    "declaration": true,
+    "baseUrl": ".",
+    "strict": true,
+    "skipLibCheck": true,
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.mts",
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+  ]
+}

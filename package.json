@@ -1,0 +1,117 @@
+{
+  "name": "gpt-token-utils",
+  "version": "0.1.0",
+  "description": "Isomorphic utilities for GPT-3 tokenization and prompt building.",
+  "repository": "git@github.com:sister-software/gpt-token-utils.git",
+  "bugs": {
+    "url": "https://github.com/sister-software/gpt-token-utils/issues"
+  },
+  "author": "Teffen Ellis <teffen@sister.software>",
+  "homepage": "https://github.com/sister-software/gpt-token-utils#readme",
+  "license": "MIT",
+  "keywords": [
+    "gpt",
+    "gpt-3",
+    "gpt3",
+    "openai",
+    "Open AI",
+    "tokenization",
+    "tokenizer",
+    "prompt",
+    "prompt-builder"
+  ],
+  "main": "dist/mod.mjs",
+  "types": "dist/mod.d.mts",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/mod.mjs",
+      "types": "./dist/mod.d.mts"
+    },
+    "./mod": {
+      "import": "./dist/mod.mjs",
+      "types": "./dist/mod.d.mts"
+    },
+    "./mod.mjs": {
+      "import": "./dist/mod.mjs",
+      "types": "./dist/mod.d.mts"
+    },
+
+    "./BytePairDecoder": {
+      "import": "./dist/BytePairDecoder/mod.mjs",
+      "types": "./dist/BytePairDecoder/mod.d.mts"
+    },
+    "./BytePairDecoder.mjs": {
+      "import": "./dist/BytePairDecoder/mod.mjs",
+      "types": "./dist/BytePairDecoder/mod.d.mts"
+    },
+
+    "./BytePairEncoder": {
+      "import": "./dist/BytePairEncoder/mod.mjs",
+      "types": "./dist/BytePairEncoder/mod.d.mts"
+    },
+    "./BytePairEncoder.mjs": {
+      "import": "./dist/BytePairEncoder/mod.mjs",
+      "types": "./dist/BytePairEncoder/mod.d.mts"
+    },
+
+    "./tokenizer": {
+      "import": "./dist/tokenizer/mod.mjs",
+      "types": "./dist/tokenizer/mod.d.mts"
+    },
+    "./tokenizer.mjs": {
+      "import": "./dist/tokenizer/mod.mjs",
+      "types": "./dist/tokenizer/mod.d.mts"
+    },
+
+    "./node": {
+      "import": "./dist/node/mod.mjs",
+      "types": "./dist/node/mod.d.mts"
+    },
+    "./node.mjs": {
+      "import": "./dist/node/mod.mjs",
+      "types": "./dist/node/mod.d.mts"
+    }
+  },
+  "scripts": {
+    "test": "vitest",
+    "build": "tsc -p ./tsconfig.json",
+    "start": "http-server ./ -p 8081",
+    "cli-example": "NODE_OPTIONS=\"--loader ts-node/esm --no-warnings\" ts-node ./example.mts"
+  },
+  "devDependencies": {
+    "@sister.software/eslint-config": "^1.0.0",
+    "@sister.software/prettier-config": "^1.0.0",
+    "@sister.software/stylelint-config": "^1.0.0",
+    "@types/node": "^18.14.4",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "@typescript-eslint/parser": "^5.53.0",
+    "eslint": "^8.34.0",
+    "http-server": "^14.1.1",
+    "prettier": "^2.8.1",
+    "prettier-plugin-organize-imports": "^3.2.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "stylelint": "~14",
+    "ts-node": "^10.9.1",
+    "typescript": "4.9.5",
+    "vitest": "^0.29.2"
+  },
+  "prettier": "@sister.software/prettier-config",
+  "stylelint": {
+    "extends": [
+      "@sister.software/stylelint-config"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "@sister.software/eslint-config"
+    ],
+    "ignorePatterns": [
+      "dist",
+      "results",
+      "node_modules"
+    ]
+  }
+}
