@@ -40,7 +40,6 @@
       "import": "./dist/mod.mjs",
       "types": "./dist/mod.d.mts"
     },
-
     "./BytePairDecoder": {
       "import": "./dist/BytePairDecoder/mod.mjs",
       "types": "./dist/BytePairDecoder/mod.d.mts"
@@ -49,7 +48,6 @@
       "import": "./dist/BytePairDecoder/mod.mjs",
       "types": "./dist/BytePairDecoder/mod.d.mts"
     },
-
     "./BytePairEncoder": {
       "import": "./dist/BytePairEncoder/mod.mjs",
       "types": "./dist/BytePairEncoder/mod.d.mts"
@@ -58,7 +56,6 @@
       "import": "./dist/BytePairEncoder/mod.mjs",
       "types": "./dist/BytePairEncoder/mod.d.mts"
     },
-
     "./tokenizer": {
       "import": "./dist/tokenizer/mod.mjs",
       "types": "./dist/tokenizer/mod.d.mts"
@@ -67,7 +64,14 @@
       "import": "./dist/tokenizer/mod.mjs",
       "types": "./dist/tokenizer/mod.d.mts"
     },
-
+    "./models": {
+      "import": "./dist/models/mod.mjs",
+      "types": "./dist/models/mod.d.mts"
+    },
+    "./models.mjs": {
+      "import": "./dist/models/mod.mjs",
+      "types": "./dist/models/mod.d.mts"
+    },
     "./node": {
       "import": "./dist/node/mod.mjs",
       "types": "./dist/node/mod.d.mts"

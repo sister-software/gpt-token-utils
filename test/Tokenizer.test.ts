@@ -6,15 +6,9 @@
  */
 
 import { expect, test } from 'vitest'
-import { BytePairDecoder, BytePairEncoder, BytePairEncoding, IBytePairEncodingOptions } from '../mod.mjs'
+import { BytePairDecoder, BytePairEncoder, BytePairEncoding } from '../mod.mjs'
 import { createDefaultBPEOptions } from '../tokenizer/mod.mjs'
-
-interface TestCase {
-  label: string
-  given: string
-  expected: number[]
-  options?: Partial<IBytePairEncodingOptions>
-}
+import { TestCase } from './common.mjs'
 
 const codeExample = [
   'function deeplyNested () {',
@@ -41,7 +35,9 @@ const codeExample = [
   '}',
 ].join('\n')
 
-const testCases: TestCase[] = [
+type TestCases = TestCase<string, number[]>[]
+
+const testCases: TestCases = [
   {
     label: 'Empty string',
     given: '',
