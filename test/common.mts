@@ -21,5 +21,5 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixturesPath = path.join(__dirname, 'fixtures')
 
 export function readFixture(fileName: string): string {
-  return readFileSync(path.join(fixturesPath, fileName), 'utf8')
+  return readFileSync(path.join(fixturesPath, fileName), 'utf8').trim()
 }
