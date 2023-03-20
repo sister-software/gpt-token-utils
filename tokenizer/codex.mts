@@ -16,9 +16,13 @@ const codexEncoding = new BytePairEncoding({
 })
 
 /**
+ * Default Codex decoder.
+ * This is a singleton instance of {@linkcode BytePairDecoder} that is pre-configured to decode GPT-3 tokens.
+ */
+export const codexEncoder = new BytePairEncoder(codexEncoding)
+
+/**
  * Encodes a given UTF-8 string into a list of GPT-3 tokens.
- *
- * This function is a convenience wrapper around a pre-configured Codex tokenizer.
  *
  * ```js
  * const codeText = [
@@ -36,7 +40,13 @@ const codexEncoding = new BytePairEncoding({
  * @see {@linkcode decodeCodexTokens} for the inverse function.
  * @see {@linkcode BytePairEncoder} for more information on how the tokens are decoded.
  */
-export const codexEncoder = new BytePairEncoder(codexEncoding)
+export const encodeCodex = codexEncoder.encode
+
+/**
+ * Default Codex decoder.
+ * This is a singleton instance of {@linkcode BytePairDecoder} that is pre-configured to decode GPT-3 tokens.
+ */
+export const codexDecoder = new BytePairDecoder(codexEncoding)
 
 /**
  * Converts a list of Codex tokens into a string.
@@ -46,6 +56,7 @@ export const codexEncoder = new BytePairEncoder(codexEncoding)
  * const tokens = [8818, 7744, 45, 7287, 7499]
  * const text = codexDecoder.decode(tokens)
  * console.log(text)
+ *
  * // `function deeplyNested () {
  * //   return {
  * //     the: {
@@ -57,4 +68,4 @@ export const codexEncoder = new BytePairEncoder(codexEncoding)
  * @see {@linkcode codexEncoder} for the inverse object.
  * @see {@linkcode BytePairDecoder} for more information on how the tokens are decoded.
  */
-export const codexDecoder = new BytePairDecoder(codexEncoding)
+export const decodeCodex = codexDecoder.decode

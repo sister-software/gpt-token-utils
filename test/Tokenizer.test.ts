@@ -62,7 +62,6 @@ const testCases: TestCase[] = [
     given: 'This is some text',
     expected: [1212, 318, 617, 2420],
   },
-
   {
     label: 'Text with special characters',
     given: `This is some text with a few special characters: !@#$%^&*()_+-=~[]{}|;:'",./<>?`,
@@ -151,7 +150,7 @@ for (const { label, given, expected, options } of testCases) {
     const encoder = new BytePairEncoder(gptEncoding)
     const decoder = new BytePairDecoder(gptEncoding)
 
-    const encoded = encoder.encode(given)
+    const encoded = encoder.encode(given).tokens
     const decoded = decoder.decode(encoded)
 
     expect(encoded).toEqual(expected)

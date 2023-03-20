@@ -9,7 +9,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "sourceMap": true,
+    "sourceMap": false,
     "target": "ESNext",
     "module": "ES2020",
     "outDir": "./dist",

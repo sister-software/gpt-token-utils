@@ -5,12 +5,52 @@
  * See LICENSE file in the project root for full license information.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { BytePairDecoder } from './BytePairDecoder.mjs'
 import { BytePairEncoding } from './BytePairEncoding.mjs'
+import { EncoderResult } from './EncoderResult.mjs'
+
+export interface EncodeFn {
+  (
+    /**
+     * The string to encode.
+     */
+    text: string
+  ): EncoderResult
+
+  (
+    /**
+     * The string to encode.
+     */
+    text: string,
+    /**
+     * Skip post-encoding processing for a slight performance boost.
+     */
+    skipPostProcessing?: boolean
+  ): number[]
+}
 
 /**
- * Methods associated with encoding text into a list of tokens.
+ * GPT Token Encoder.
+ *
+ * Generally, you should not need to use this class directly unless you are
+ * implementing a custom token encoder.
+ *
+ * @see {@linkcode BytePairDecoder} for the decoder.
+ *
+ * ```ts
+ * const encoder = new BytePairEncoder(bpeTokenMap, ranksMap)
+ * const tokens = encoder.encode(encoder)
+ * ```
  */
-export interface ITokenEncoder {
+export class BytePairEncoder {
+  constructor(
+    protected _bpe: BytePairEncoding,
+    protected _textEncoder = new TextEncoder(),
+    protected _bpeTokenCache = new Map<string, string[]>()
+  ) {}
+  //#region Public Methods
+
   /**
    * Encodes a given string into a list of tokens.
    *
@@ -22,36 +62,7 @@ export interface ITokenEncoder {
    *
    * @returns The list of encoded tokens.
    */
-  encode(
-    /**
-     * The string to encode.
-     */
-    text: string
-  ): number[]
-}
-
-/**
- * GPT Token Encoder.
- *
- * Generally, you should not need to use this class directly unless you are
- * implementing a custom token encoder.
- *
- * @see {@linkcode TokenDecoder} for the decoder.
- *
- * ```ts
- * const encoder = new BytePairEncoder(bpeTokenMap, ranksMap)
- * const tokens = encoder.encode(encoder)
- * ```
- */
-export class BytePairEncoder implements ITokenEncoder {
-  constructor(
-    protected _bpe: BytePairEncoding,
-    protected _textEncoder = new TextEncoder(),
-    protected _bpeTokenCache = new Map<string, string>()
-  ) {}
-  //#region Public Methods
-
-  public encode(text: string): number[] {
+  public encode: EncodeFn = (text, skipPostProcessing = false): any => {
     // First, we run the pattern matcher on the text...
     const matchedTextSegments = Array.from(text.matchAll(this._bpe.tokenizationPattern), (x) => x[0])
 
@@ -70,20 +81,19 @@ export class BytePairEncoder implements ITokenEncoder {
     })
 
     // Then we convert the UTF-8 byte arrays into BPE tokens...
-    const bytePairEncodingTokens = utf8Tokens.map((token) => this._tokenToBPE(token))
-    const tokens = bytePairEncodingTokens.map((bpeToken) => {
-      return bpeToken.split(' ').map((bpeToken) => {
-        const token = this._bpe.tokenMap.bytePairToToken(bpeToken)
+    const bpeTokenPairs = utf8Tokens.flatMap((token) => this._tokenToBPE(token))
 
-        if (token === undefined) {
-          throw new Error(`No token found for BPE token ${bpeToken}`)
-        }
-
-        return token
-      })
+    const tokens = bpeTokenPairs.map((bpeToken) => {
+      return this._bpe.tokenMap.bytePairToToken(bpeToken)
     })
 
-    return tokens.flat()
+    if (skipPostProcessing) {
+      return tokens
+    }
+
+    const result = new EncoderResult({ tokens, bpeTokenPairs, originalText: text, matchedTextSegments })
+
+    return result
   }
 
   /**
@@ -162,13 +172,13 @@ export class BytePairEncoder implements ITokenEncoder {
    *
    * @returns The BPE-encoded token.
    */
-  protected _tokenToBPE(token: string): string {
+  protected _tokenToBPE(token: string): string[] {
     if (this._bpeTokenCache.has(token)) {
       return this._bpeTokenCache.get(token)!
     }
 
     // Convert the input token to an array of individual characters
-    let word = token.split('')
+    let word = Array.from(token)
 
     // Get all possible pairs of characters in the token
     let pairs = this.getPairs(word)
@@ -178,8 +188,12 @@ export class BytePairEncoder implements ITokenEncoder {
     while (true) {
       // If there are no pairs, return the original token
       if (!pairs || pairs.length === 0) {
-        return token
+        const word = [token]
+        this._bpeTokenCache.set(token, word)
+
+        return word
       }
+
       // Find the pair with the lowest rank (or highest numeric value if the rank is NaN)
       const minRankPair = this._findMinRankPair(pairs)
 
@@ -224,12 +238,9 @@ export class BytePairEncoder implements ITokenEncoder {
       pairs = this.getPairs(word)
     }
 
-    // Join the characters in the final word with spaces and return the result
-    const result = word.join(' ')
+    this._bpeTokenCache.set(token, word)
 
-    this._bpeTokenCache.set(token, result)
-
-    return result
+    return word
   }
 
   /**

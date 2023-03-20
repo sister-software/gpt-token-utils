@@ -6,7 +6,7 @@
  */
 
 /**
- * A map of tokens to their corresponding byte-pair encodings.
+ * A map of byte-pair encodings to their corresponding tokens.
  * @internal
  */
 export type TokenEncodingsRecord = Record<string, number | undefined>
@@ -87,7 +87,7 @@ export class BytePairTokenMap {
     return this._bpeTokenMap.size
   }
 
-  [nodeInspectSymbol]() {
+  public [nodeInspectSymbol]() {
     return `BytePairTokenMap(${this.size})`
   }
 }

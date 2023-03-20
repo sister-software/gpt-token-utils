@@ -6,6 +6,9 @@
  */
 
 import { BytePairEncoding } from './BytePairEncoding.mjs'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { BytePairEncoder } from './BytePairEncoder.mjs'
+import type { EncoderResult } from './EncoderResult.mjs'
 
 /**
  * Methods associated with decoding a list of tokens into a string.
@@ -26,7 +29,7 @@ export interface ITokenDecoder {
     /**
      * The list of tokens to decode.
      */
-    tokens: number[]
+    tokens: number[] | EncoderResult
   ): string
 }
 
@@ -36,7 +39,7 @@ export interface ITokenDecoder {
  * Generally, you should not need to use this class directly unless you are
  * implementing a custom token decoder.
  *
- * @see {@linkcode TokenEncoder} for the encoder.
+ * @see {@linkcode BytePairEncoder} for the encoder.
  *
  * ```ts
  * const decoder = new BytePairDecoder({codePointByteMap, bpeTokenMap})
@@ -46,19 +49,18 @@ export interface ITokenDecoder {
 export class BytePairDecoder implements ITokenDecoder {
   constructor(protected _bpe: BytePairEncoding, protected _textDecoder = new TextDecoder()) {}
 
-  public decode(tokens: number[]): string {
-    const bytePairEncodings = tokens
+  public decode = (tokens: number[] | EncoderResult): string => {
+    const source = Array.isArray(tokens) ? tokens : tokens.tokens
+
+    const bytePairEncodings = source
       // First, we convert the tokens into BPE...
       .map((token) => this._bpe.tokenMap.tokenToBytePair(token))
       // The pairs combined into a single string to combine the graphemes.
       .join('')
 
-    // We then convert the BPE into UTF-8 bytes...
-    const bytes = bytePairEncodings
-      // We then split the string into an array of characters...
-      .split('')
-      // To convert the characters into bytes
-      .map((x) => this._bpe.codePointByteMap.codePointToByte(x))
+    // We then convert the BPE into UTF-8 by split the string...
+    //...into an array of characters to convert the characters into bytes
+    const bytes = Array.from(bytePairEncodings, (x) => this._bpe.codePointByteMap.codePointToByte(x))
 
     // Finally, we convert the bytes into a string.
     const text = this._textDecoder.decode(new Uint8Array(bytes))

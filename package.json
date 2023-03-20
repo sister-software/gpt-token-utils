@@ -1,6 +1,6 @@
 {
   "name": "gpt-token-utils",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Isomorphic utilities for GPT-3 tokenization and prompt building.",
   "repository": "git@github.com:sister-software/gpt-token-utils.git",
   "bugs": {
@@ -23,6 +23,9 @@
   "main": "dist/mod.mjs",
   "types": "dist/mod.d.mts",
   "type": "module",
+  "files": [
+    "dist/**/*"
+  ],
   "exports": {
     "./package.json": "./package.json",
     ".": {

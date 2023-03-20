@@ -14,6 +14,12 @@ import { DEFAULT_BPE_OPTIONS } from './data.mjs'
 const gptEncoding = new BytePairEncoding(DEFAULT_BPE_OPTIONS)
 
 /**
+ * Default GPT-3 decoder.
+ * This is a singleton instance of {@linkcode BytePairEncoder} that is pre-configured to decode GPT-3 tokens.
+ */
+export const gptEncoder = new BytePairEncoder(gptEncoding)
+
+/**
  * Encodes a given UTF-8 string into a list of GPT-3 tokens.
  *
  * ```js
@@ -22,10 +28,16 @@ const gptEncoding = new BytePairEncoding(DEFAULT_BPE_OPTIONS)
  * console.log(tokens) // [5211, 290, 305, 2340, 4320, 286, 5186, 15900, 30]
  * ```
  *
- * @see {@linkcode gptDecoder} for the inverse function.
+ * @see {@linkcode decode} for the inverse function.
  * @see {@linkcode BytePairEncoder} for more information on how the tokens are decoded.
  */
-export const gptEncoder = new BytePairEncoder(gptEncoding)
+export const encode = gptEncoder.encode
+
+/**
+ * Default GPT-3 decoder.
+ * This is a singleton instance of {@linkcode BytePairDecoder} that is pre-configured to decode GPT-3 tokens.
+ */
+export const gptDecoder = new BytePairDecoder(gptEncoding)
 
 /**
  * Converts a list of GPT-3 tokens into a string.
@@ -36,7 +48,7 @@ export const gptEncoder = new BytePairEncoder(gptEncoding)
  * console.log(text) // "Do androids dream of electric sheep?"
  * ```
  *
- * @see {@linkcode gptEncoder} for the inverse function.
+ * @see {@linkcode encode} for the inverse function.
  * @see {@linkcode BytePairDecoder} for more information on how the tokens are decoded.
  */
-export const gptDecoder = new BytePairDecoder(gptEncoding)
+export const decode = gptDecoder.decode
