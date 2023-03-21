@@ -68,7 +68,7 @@ export class BytePairEncoding {
     this.codePointByteMap = new CodePointByteMap()
 
     if (typeof options.mergeSpaces === 'string') {
-      this.mergesSpacesCount = options.mergeSpaces === 'codex' ? 24 : 0
+      this.mergesSpacesCount = options.mergeSpaces === 'codex' ? 30 : 0
     } else {
       this.mergesSpacesCount = options.mergeSpaces ?? 0
     }

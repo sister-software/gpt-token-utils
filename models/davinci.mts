@@ -41,26 +41,3 @@ export const DavinciModelFamily: ModelFamily = {
     fineTunedUsage: 0.12,
   },
 }
-
-export const CodexDavinciModelFamily: ModelFamily = {
-  familyID: ModelFamilyIDs.CodeDavinci,
-  tokenLimit: 8001,
-  mergeSpaces: 24,
-  modelIDs: ['code-davinci-002', 'code-davinci-edit-001'],
-  preferredModelID: 'code-davinci-002',
-  pricing: {
-    usage: 0.02,
-    prompt: 0.02,
-    completion: 0.02,
-    fineTunedTraining: 0.03,
-    fineTunedUsage: 0.12,
-  },
-}
-
-/**
- * Determines if the modelID is a Codex Davinci model.
- * @internal
- */
-export function isCodexDavinciModelID(modelID: string): boolean {
-  return CodexDavinciModelFamily.modelIDs.includes(modelID)
-}

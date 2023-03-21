@@ -10,18 +10,20 @@ import { BabbageModelFamily } from './babbage.mjs'
 import { ChatGPTModelFamily } from './chat-gpt.mjs'
 import { ModelFamiliesMap } from './common.mjs'
 import { CurieModelFamily } from './curie.mjs'
-import { CodexDavinciModelFamily, DavinciModelFamily } from './davinci.mjs'
+import { DavinciModelFamily } from './davinci.mjs'
 import { GPT4_32KModelFamily, GPT4_8KModelFamily } from './gpt-4.mjs'
 
-export const modelFamiliesMap = new ModelFamiliesMap()
+/**
+ * A global store of all model families.
+ */
+export const ModelFamilyStore = new ModelFamiliesMap()
 
-modelFamiliesMap.addFamily(AdaModelFamily)
-modelFamiliesMap.addFamily(BabbageModelFamily)
-modelFamiliesMap.addFamily(CurieModelFamily)
-modelFamiliesMap.addFamily(CodexDavinciModelFamily)
-modelFamiliesMap.addFamily(DavinciModelFamily)
-modelFamiliesMap.addFamily(ChatGPTModelFamily)
-modelFamiliesMap.addFamily(GPT4_32KModelFamily)
-modelFamiliesMap.addFamily(GPT4_8KModelFamily)
+ModelFamilyStore.addFamily(AdaModelFamily)
+ModelFamilyStore.addFamily(BabbageModelFamily)
+ModelFamilyStore.addFamily(CurieModelFamily)
+ModelFamilyStore.addFamily(DavinciModelFamily)
+ModelFamilyStore.addFamily(ChatGPTModelFamily)
+ModelFamilyStore.addFamily(GPT4_32KModelFamily)
+ModelFamilyStore.addFamily(GPT4_8KModelFamily)
 
 export * from './common.mjs'

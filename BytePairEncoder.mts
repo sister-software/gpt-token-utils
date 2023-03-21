@@ -10,7 +10,13 @@ import type { BytePairDecoder } from './BytePairDecoder.mjs'
 import { BytePairEncoding } from './BytePairEncoding.mjs'
 import { EncoderResult } from './EncoderResult.mjs'
 
-export interface EncodeFn {
+/**
+ * A valid input for the encoder.
+ * @internal
+ */
+export type EncoderInput = string | EncoderResult
+
+export interface TokenEncodeFn {
   (
     /**
      * The string to encode.
@@ -27,7 +33,18 @@ export interface EncodeFn {
      * Skip post-encoding processing for a slight performance boost.
      */
     skipPostProcessing?: boolean
-  ): number[]
+  ): EncoderResult
+
+  (
+    /**
+     * A previous encoder result to use as a starting point.
+     * This will simply pass back the same result.
+     * Useful when batch processing a mixed list of strings and encoder results.
+     */
+    encoderResult: EncoderResult
+  ): EncoderResult
+
+  (input: EncoderInput, skipPostProcessing?: boolean): EncoderResult
 }
 
 /**
@@ -62,9 +79,13 @@ export class BytePairEncoder {
    *
    * @returns The list of encoded tokens.
    */
-  public encode: EncodeFn = (text, skipPostProcessing = false): any => {
+  public encode: TokenEncodeFn = (input, skipPostProcessing = false): any => {
+    if (typeof input !== 'string') {
+      return input
+    }
+
     // First, we run the pattern matcher on the text...
-    const matchedTextSegments = Array.from(text.matchAll(this._bpe.tokenizationPattern), (x) => x[0])
+    const matchedTextSegments = Array.from(input.matchAll(this._bpe.tokenizationPattern), (x) => x[0])
 
     // Then we convert the tokens into UTF-8 byte arrays...
     const utf8Tokens = matchedTextSegments.map((textSegment) => {
@@ -91,7 +112,7 @@ export class BytePairEncoder {
       return tokens
     }
 
-    const result = new EncoderResult({ tokens, bpeTokenPairs, originalText: text, matchedTextSegments })
+    const result = new EncoderResult({ tokens, bpeTokenPairs, originalInput: input, matchedTextSegments })
 
     return result
   }

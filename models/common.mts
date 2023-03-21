@@ -8,22 +8,21 @@
 /**
  * The IDs of available model families.
  */
-export const enum ModelFamilyIDs {
-  Ada = 'ada',
-  Babbage = 'babbage',
-  Curie = 'curie',
-  Davinci = 'davinci',
-  CodeDavinci = 'code-davinci',
-  ChatGPT = 'chat-gpt',
-  GPT4 = 'gpt-4',
-  GPT4_32K = 'gpt-4-32k',
-}
+export const ModelFamilyIDs = {
+  Ada: 'ada',
+  Babbage: 'babbage',
+  Curie: 'curie',
+  Davinci: 'davinci',
+  ChatGPT: 'chat-gpt',
+  GPT4: 'gpt-4',
+  GPT4_32K: 'gpt-4-32k',
+} as const
 
 /**
  * A model family is a group of models that share a common lineage or training data.
  */
 export interface ModelFamily {
-  familyID: ModelFamilyIDs
+  familyID: string
   /**
    * The number of tokens that can be used with this model in a single request.
    */
@@ -74,10 +73,34 @@ export interface ModelPricing {
   completion: number | null
 }
 
-export type ModelFamiliesMapKey = ModelFamilyIDs | string
+export interface GetModelFamilyFn {
+  (
+    /**
+     * The ID of a model within a family, e.g. `"text-davinci-003"`
+     * @returns The family that the model belongs to.
+     */
+    modelID: string
+  ): ModelFamily
+  (
+    /**
+     * The ID of a model family, e.g. `"davinci"`
+     * @returns The family associated with the ID.
+     */
+    familyID: string
+  ): ModelFamily
+  (
+    /**
+     * A model family. This is useful for when you already have a model family object.
+     * @returns The same family object that was passed in.
+     */
+    modelFamily: ModelFamily
+  ): ModelFamily
+
+  (input: string | ModelFamily): ModelFamily
+}
 
 export class ModelFamiliesMap {
-  protected _familyMap = new Map<ModelFamilyIDs, ModelFamily>()
+  protected _familyMap = new Map<string, ModelFamily>()
   protected _modelToFamilyMap = new Map<string, ModelFamily>()
 
   public addFamily(family: ModelFamily): void {
@@ -87,7 +110,7 @@ export class ModelFamiliesMap {
     }
   }
 
-  public getFamilyByFamilyID(familyID: ModelFamilyIDs): ModelFamily | undefined {
+  public getFamilyByFamilyID(familyID: string): ModelFamily | undefined {
     return this._familyMap.get(familyID)
   }
 
@@ -95,18 +118,21 @@ export class ModelFamiliesMap {
     return this._modelToFamilyMap.get(modelID)
   }
 
-  public get(modelOrFamilyID: ModelFamiliesMapKey): ModelFamily {
-    const family =
-      this.getFamilyByFamilyID(modelOrFamilyID as ModelFamilyIDs) || this.getFamilyByModelID(modelOrFamilyID as string)
+  public get: GetModelFamilyFn = (input) => {
+    if (typeof input === 'string') {
+      const family = this.getFamilyByFamilyID(input) || this.getFamilyByModelID(input)
 
-    if (!family) {
-      throw new Error(`No model ID or family found with ID: ${modelOrFamilyID}`)
+      if (!family) {
+        throw new Error(`No model ID or family found with ID: ${input}`)
+      }
+
+      return family
     }
 
-    return family
+    return input
   }
 
-  public isModelInFamily(modelID: string, familyID: ModelFamilyIDs): boolean {
+  public isModelInFamily(modelID: string, familyID: string): boolean {
     const family = this.getFamilyByFamilyID(familyID)
 
     return family?.modelIDs.includes(modelID) ?? false

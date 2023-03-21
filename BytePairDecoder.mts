@@ -13,23 +13,19 @@ import type { EncoderResult } from './EncoderResult.mjs'
 /**
  * Methods associated with decoding a list of tokens into a string.
  */
-export interface ITokenDecoder {
-  /**
-   * Converts a list of tokens into a string.
-   *
-   * ```ts
-   * const tokens = [5211, 290, 305, 2340, 4320, 286, 5186, 15900, 30]
-   * const text = decoder.decode(tokens)
-   * console.log(text) // "Do androids dream of electric sheep?"
-   * ```
-   *
-   * @returns The decoded string.
-   */
-  decode(
+export interface TokenDecodeFn {
+  (
     /**
      * The list of tokens to decode.
      */
-    tokens: number[] | EncoderResult
+    tokens: number[]
+  ): string
+
+  (
+    /**
+     * The resulting object of the {@linkcode BytePairEncoder.encode} function.
+     */
+    encoderResult: EncoderResult
   ): string
 }
 
@@ -46,10 +42,21 @@ export interface ITokenDecoder {
  * const text = decoder.decode(tokens)
  * ```
  */
-export class BytePairDecoder implements ITokenDecoder {
+export class BytePairDecoder {
   constructor(protected _bpe: BytePairEncoding, protected _textDecoder = new TextDecoder()) {}
 
-  public decode = (tokens: number[] | EncoderResult): string => {
+  /**
+   * Converts a list of tokens into a string.
+   *
+   * ```ts
+   * const tokens = [5211, 290, 305, 2340, 4320, 286, 5186, 15900, 30]
+   * const text = decoder.decode(tokens)
+   * console.log(text) // "Do androids dream of electric sheep?"
+   * ```
+   *
+   * @returns The decoded string.
+   */
+  public decode: TokenDecodeFn = (tokens: number[] | EncoderResult): string => {
     const source = Array.isArray(tokens) ? tokens : tokens.tokens
 
     const bytePairEncodings = source

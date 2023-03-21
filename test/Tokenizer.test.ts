@@ -8,32 +8,7 @@
 import { expect, test } from 'vitest'
 import { BytePairDecoder, BytePairEncoder, BytePairEncoding } from '../mod.mjs'
 import { createDefaultBPEOptions } from '../tokenizer/mod.mjs'
-import { TestCase } from './common.mjs'
-
-const codeExample = [
-  'function deeplyNested () {',
-  '  return {',
-  '    the: {',
-  '      quick: {',
-  '        brown: {',
-  '          fox: {',
-  '            jumps: {',
-  '              over: {',
-  '                the: {',
-  '                  lazy: {',
-  '                    dog: {',
-  '                    }',
-  '                  }',
-  '                }',
-  '              }',
-  '            }',
-  '          }',
-  '        }',
-  '      }',
-  '    }',
-  '  }',
-  '}',
-].join('\n')
+import { readFixture, TestCase } from './common.mjs'
 
 type TestCases = TestCase<string, number[]>[]
 
@@ -106,7 +81,7 @@ const testCases: TestCases = [
   // Codex models use additional tokens for whitespace...
   {
     label: 'Without Codex',
-    given: codeExample,
+    given: readFixture('nested-javascript.js'),
     expected: [
       8818, 7744, 45, 7287, 7499, 1391, 198, 220, 1441, 1391, 198, 220, 220, 220, 262, 25, 1391, 198, 220, 220, 220,
       220, 220, 2068, 25, 1391, 198, 220, 220, 220, 220, 220, 220, 220, 7586, 25, 1391, 198, 220, 220, 220, 220, 220,
@@ -126,7 +101,7 @@ const testCases: TestCases = [
   // Codex models use additional tokens for whitespace...
   {
     label: 'With Codex',
-    given: codeExample,
+    given: readFixture('nested-javascript.js'),
     expected: [
       8818, 7744, 45, 7287, 7499, 1391, 198, 220, 1441, 1391, 198, 50258, 262, 25, 1391, 198, 50260, 2068, 25, 1391,
       198, 50262, 7586, 25, 1391, 198, 50264, 21831, 25, 1391, 198, 50266, 18045, 25, 1391, 198, 50268, 625, 25, 1391,

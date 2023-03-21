@@ -1,6 +1,6 @@
 {
   "name": "gpt-token-utils",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Isomorphic utilities for GPT-3 tokenization and prompt building.",
   "repository": "git@github.com:sister-software/gpt-token-utils.git",
   "bugs": {
@@ -85,6 +85,7 @@
     "test": "vitest",
     "build": "tsc -p ./tsconfig.json",
     "start": "http-server ./ -p 8081",
+    "cli-tiktoken": "NODE_OPTIONS=\"--loader ts-node/esm --no-warnings\" ts-node ./internal/tiktoken.mts",
     "cli-example": "NODE_OPTIONS=\"--loader ts-node/esm --no-warnings\" ts-node ./example.mts"
   },
   "devDependencies": {
@@ -118,7 +119,8 @@
     "ignorePatterns": [
       "dist",
       "results",
-      "node_modules"
+      "node_modules",
+      "test/fixtures"
     ]
   }
 }

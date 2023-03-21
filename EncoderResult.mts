@@ -24,7 +24,7 @@ export interface IEncoderResult {
   /**
    * The original text content that was encoded.
    */
-  readonly originalText: string
+  readonly originalInput: string
 
   /**
    * The matched text segments found during encoding.
@@ -71,12 +71,12 @@ export class EncoderResult implements IEncoderResult {
 
   public readonly tokens: number[]
   public readonly bpeTokenPairs: string[]
-  public readonly originalText: string
+  public readonly originalInput: string
   public readonly matchedTextSegments: string[]
 
   public segmenter: Intl.Segmenter | undefined
 
-  constructor({ tokens, bpeTokenPairs, originalText, matchedTextSegments }: IEncoderResult, locale?: string) {
+  constructor({ tokens, bpeTokenPairs, originalInput, matchedTextSegments }: IEncoderResult, locale?: string) {
     if (bpeTokenPairs.length !== tokens.length) {
       throw new Error('The number of BPE token pairs must match the number of tokens.')
     }
@@ -109,7 +109,7 @@ export class EncoderResult implements IEncoderResult {
 
     this.tokens = tokens
     this.bpeTokenPairs = bpeTokenPairs
-    this.originalText = originalText
+    this.originalInput = originalInput
     this.matchedTextSegments = matchedTextSegments
 
     if (supportsSegmenter) {
@@ -161,10 +161,10 @@ export class EncoderResult implements IEncoderResult {
   public get characterCount(): number {
     if (!this.segmenter) {
       console.warn('Intl.Segmenter is not supported. Falling back to string length.')
-      return this.originalText.length
+      return this.originalInput.length
     }
 
-    return Array.from(this.segmenter.segment(this.originalText)).length
+    return Array.from(this.segmenter.segment(this.originalInput)).length
   }
 
   public [nodeInspectSymbol]() {
@@ -179,7 +179,7 @@ export class EncoderResult implements IEncoderResult {
     return {
       tokens: this.tokens,
       bpeTokenPairs: this.bpeTokenPairs,
-      originalText: this.originalText,
+      originalInput: this.originalInput,
       matchedTextSegments: this.matchedTextSegments,
     }
   }

@@ -44,7 +44,7 @@ export const gptDecoder = new BytePairDecoder(gptEncoding)
  *
  * ```ts
  * const tokens = [5211, 290, 305, 2340, 4320, 286, 5186, 15900, 30]
- * const text = decodeGPTTokens(tokens)
+ * const text = decode(tokens)
  * console.log(text) // "Do androids dream of electric sheep?"
  * ```
  *

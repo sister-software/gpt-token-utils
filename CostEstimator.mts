@@ -5,9 +5,10 @@
  * See LICENSE file in the project root for full license information.
  */
 
+import { EncoderInput } from './BytePairEncoder.mjs'
 import { EncoderResult } from './EncoderResult.mjs'
-import { modelFamiliesMap, ModelFamiliesMapKey, ModelFamily, ModelFamilyIDs, ModelPricingTypes } from './models/mod.mjs'
-import { encode, encodeCodex } from './tokenizer/mod.mjs'
+import { ModelFamily, ModelFamilyStore, ModelPricingTypes } from './models/mod.mjs'
+import { encode } from './tokenizer/mod.mjs'
 
 export type CostEstimatorInput = string | EncoderResult
 
@@ -18,40 +19,26 @@ export interface NormalizeInputResult {
   encodedResults: EncoderResult[]
 }
 
-export class CostEstimator {
-  static normalizeInput(modelOrFamilyID: ModelFamiliesMapKey, ...inputs: CostEstimatorInput[]): NormalizeInputResult {
-    const modelFamily = modelFamiliesMap.get(modelOrFamilyID)
-    const encoderFn = modelFamily.familyID === ModelFamilyIDs.CodeDavinci ? encodeCodex : encode
+export interface EstimateCostFn {
+  (modelOrFamilyID: string, ...inputs: EncoderInput[]): ICostEstimationResult
+  (modelFamily: ModelFamily, ...inputs: EncoderInput[]): ICostEstimationResult
+}
 
-    const encodedResults = inputs.map((input) => {
-      if (typeof input === 'string') {
-        return encoderFn(input)
-      }
+export const estimateCost: EstimateCostFn = (modelInput: string | ModelFamily, ...inputs: EncoderInput[]) => {
+  const modelFamily = ModelFamilyStore.get(modelInput)
+  const encodedResults = inputs.map((input) => encode(input))
+  const tokenCount = encodedResults.reduce((acc, result) => acc + result.tokens.length, 0)
 
-      return input
-    })
+  // Remember that pricing is per 1000 tokens
+  const pricedUnits = tokenCount / 1000
 
-    return {
-      modelFamily,
-      encodedResults,
-    }
+  const result = {} as ICostEstimationResult
+
+  for (const [pricingType, pricePer] of Object.entries(modelFamily.pricing)) {
+    const price = typeof pricePer === 'number' ? pricePer * pricedUnits : null
+
+    result[pricingType as ModelPricingTypes] = price
   }
 
-  public estimate(modelOrFamilyID: ModelFamiliesMapKey, ...inputs: CostEstimatorInput[]): ICostEstimationResult {
-    const { modelFamily, encodedResults } = CostEstimator.normalizeInput(modelOrFamilyID, ...inputs)
-    const tokenCount = encodedResults.reduce((acc, result) => acc + result.tokens.length, 0)
-
-    // Remember that pricing is per 1000 tokens
-    const pricedUnits = tokenCount / 1000
-
-    const result = {} as ICostEstimationResult
-
-    for (const [pricingType, pricePer] of Object.entries(modelFamily.pricing)) {
-      const price = typeof pricePer === 'number' ? pricePer * pricedUnits : null
-
-      result[pricingType as ModelPricingTypes] = price
-    }
-
-    return result
-  }
+  return result
 }
