@@ -49,39 +49,6 @@ console.log(tokens.length) // 6
 console.log(decode(tokens)) // "Humans are strange creatures...."
 ```
 
-If you're working with Codex-based models optimized for strings of code, you can also use the `encodeCodex` and `decodeCodex` exports.
-
-```js
-import { encodeCodex, decodeCodex } from 'gpt-token-utils'
-
-const codeExample = [
-  'function deeplyNested () {',
-  '  return {',
-  '    the: {',
-  '      quick: {',
-  '        brown: {',
-  '          fox: {',
-  '            jumps: {',
-  '              over: {',
-  '                the: {',
-  '                  lazy: {',
-  '                    dog: {',
-  '                    }',
-  '                  }',
-  '                }',
-  '              }',
-  '            }',
-  '          }',
-  '        }',
-  '      }',
-  '    }',
-  '  }',
-  '}',
-].join('\n')
-
-const tokens = encodeCodex(codeExample)
-```
-
 ### Advanced Usage
 
 By default, GPT Token Utils includes a sizable vocabulary and encoder. Alternatively, you can pass in your own to customize the encoding/decoding process.
